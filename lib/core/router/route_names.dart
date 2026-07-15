@@ -13,4 +13,5 @@ class RouteNames {
   static const chatDetail = 'chat_detail';
   static const profile = 'profile';
   static const editProfile = 'edit_profile';
+  static const userProfile = 'user_profile';
 }

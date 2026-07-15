@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../services/providers.dart';
+import '../../features/auth/presentation/screens/login_screen.dart';
+import '../../features/auth/presentation/screens/signup_screen.dart';
+import '../../features/profile/presentation/screens/profile_screen.dart';
+import '../../features/profile/presentation/screens/edit_profile_screen.dart';
 import 'route_names.dart';
 
-// Placeholder screens — will be replaced feature by feature.
+// Placeholder screens — will be replaced feature by feature in later phases.
 class _Placeholder extends StatelessWidget {
   final String label;
   const _Placeholder(this.label);
@@ -34,12 +38,12 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/login',
         name: RouteNames.login,
-        builder: (context, state) => const _Placeholder('Login Screen'),
+        builder: (context, state) => const LoginScreen(),
       ),
       GoRoute(
         path: '/signup',
         name: RouteNames.signup,
-        builder: (context, state) => const _Placeholder('Signup Screen'),
+        builder: (context, state) => const SignupScreen(),
       ),
       // Shell route for bottom-nav tabs (Home, Explore, Reels, Activity, Profile)
       StatefulShellRoute.indexedStack(
@@ -78,7 +82,7 @@ final routerProvider = Provider<GoRouter>((ref) {
             GoRoute(
               path: '/profile',
               name: RouteNames.profile,
-              builder: (context, state) => const _Placeholder('Profile'),
+              builder: (context, state) => const ProfileScreen(), // userId: null => own profile
             ),
           ]),
         ],
@@ -87,6 +91,18 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/create_post',
         name: RouteNames.createPost,
         builder: (context, state) => const _Placeholder('Create Post'),
+      ),
+      GoRoute(
+        path: '/edit_profile',
+        name: RouteNames.editProfile,
+        builder: (context, state) => const EditProfileScreen(),
+      ),
+      GoRoute(
+        path: '/profile/:userId',
+        name: RouteNames.userProfile,
+        builder: (context, state) => ProfileScreen(
+          userId: state.pathParameters['userId'],
+        ),
       ),
       GoRoute(
         path: '/chat',
