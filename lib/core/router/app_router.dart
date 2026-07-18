@@ -6,6 +6,7 @@ import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/signup_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../features/profile/presentation/screens/edit_profile_screen.dart';
+import '../../features/feed/presentation/screens/home_feed_screen.dart';
 import 'route_names.dart';
 
 // Placeholder screens — will be replaced feature by feature in later phases.
@@ -54,7 +55,7 @@ final routerProvider = Provider<GoRouter>((ref) {
             GoRoute(
               path: '/home',
               name: RouteNames.home,
-              builder: (context, state) => const _Placeholder('Home Feed'),
+              builder: (context, state) => const HomeFeedScreen(),
             ),
           ]),
           StatefulShellBranch(routes: [
