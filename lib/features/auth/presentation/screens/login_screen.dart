@@ -121,6 +121,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     onPressed: () async {
                       final success =
                           await ref.read(authControllerProvider.notifier).signInWithGoogle();
+                      // ignore: use_build_context_synchronously
                       if (success && mounted) context.go('/home');
                     },
                   ),
