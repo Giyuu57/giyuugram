@@ -131,11 +131,6 @@ class _MediaPickerScreenState extends State<MediaPickerScreen> {
   Future<File?> _cropImage(String path) async {
     final cropped = await ImageCropper().cropImage(
       sourcePath: path,
-      aspectRatioPresets: [
-        CropAspectRatioPreset.square,
-        CropAspectRatioPreset.ratio4x3,
-        CropAspectRatioPreset.original,
-      ],
       uiSettings: [
         AndroidUiSettings(
           toolbarTitle: 'Crop',
@@ -144,6 +139,11 @@ class _MediaPickerScreenState extends State<MediaPickerScreen> {
           backgroundColor: Colors.black,
           initAspectRatio: CropAspectRatioPreset.square,
           lockAspectRatio: false,
+          aspectRatioPresets: [
+            CropAspectRatioPreset.square,
+            CropAspectRatioPreset.ratio4x3,
+            CropAspectRatioPreset.original,
+          ],
         ),
         IOSUiSettings(
           title: 'Crop',
@@ -178,7 +178,8 @@ class _MediaPickerScreenState extends State<MediaPickerScreen> {
           if (hasMedia)
             TextButton(
               onPressed: _proceed,
-              child: const Text('Next', style: TextStyle(fontWeight: FontWeight.bold)),
+              child: const Text('Next',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
             ),
         ],
       ),
@@ -191,7 +192,8 @@ class _MediaPickerScreenState extends State<MediaPickerScreen> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(Icons.videocam, size: 64, color: Colors.grey),
+                          const Icon(Icons.videocam,
+                              size: 64, color: Colors.grey),
                           const SizedBox(height: 8),
                           Text(_selectedVideo!.path.split('/').last),
                         ],
@@ -205,7 +207,8 @@ class _MediaPickerScreenState extends State<MediaPickerScreen> {
                             itemBuilder: (context, index) => Stack(
                               children: [
                                 Positioned.fill(
-                                  child: Image.file(_selectedImages[index], fit: BoxFit.contain),
+                                  child: Image.file(_selectedImages[index],
+                                      fit: BoxFit.contain),
                                 ),
                                 Positioned(
                                   top: 8,
@@ -213,7 +216,8 @@ class _MediaPickerScreenState extends State<MediaPickerScreen> {
                                   child: CircleAvatar(
                                     backgroundColor: Colors.black54,
                                     child: IconButton(
-                                      icon: const Icon(Icons.close, color: Colors.white, size: 18),
+                                      icon: const Icon(Icons.close,
+                                          color: Colors.white, size: 18),
                                       onPressed: () => _removeImage(index),
                                     ),
                                   ),
@@ -225,14 +229,16 @@ class _MediaPickerScreenState extends State<MediaPickerScreen> {
                         if (_selectedImages.length > 1)
                           Padding(
                             padding: const EdgeInsets.all(8),
-                            child: Text('${_selectedImages.length} photos selected',
+                            child: Text(
+                                '${_selectedImages.length} photos selected',
                                 style: const TextStyle(color: Colors.grey)),
                           ),
                         Padding(
                           padding: const EdgeInsets.all(8),
                           child: TextButton.icon(
                             onPressed: _pickMultiplePhotos,
-                            icon: const Icon(Icons.add_photo_alternate_outlined),
+                            icon:
+                                const Icon(Icons.add_photo_alternate_outlined),
                             label: const Text('Add more photos'),
                           ),
                         ),

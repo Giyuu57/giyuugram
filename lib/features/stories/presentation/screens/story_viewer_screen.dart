@@ -150,7 +150,7 @@ class _StoryViewerScreenState extends ConsumerState<StoryViewerScreen> {
                           margin: const EdgeInsets.symmetric(horizontal: 2),
                           height: 2,
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.4),
+                            color: Colors.white.withValues(alpha: 0.4),
                             borderRadius: BorderRadius.circular(2),
                           ),
                           child: FractionallySizedBox(

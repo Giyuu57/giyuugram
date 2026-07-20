@@ -10,11 +10,13 @@ final chatRepositoryProvider = Provider<ChatRepository>((ref) {
 });
 
 /// Chat list — conversations for the current user.
-class ConversationsController extends StateNotifier<AsyncValue<List<Conversation>>> {
+class ConversationsController
+    extends StateNotifier<AsyncValue<List<Conversation>>> {
   final ChatRepository _repository;
   final String _userId;
 
-  ConversationsController(this._repository, this._userId) : super(const AsyncValue.loading()) {
+  ConversationsController(this._repository, this._userId)
+      : super(const AsyncValue.loading()) {
     _load();
   }
 
@@ -30,17 +32,21 @@ class ConversationsController extends StateNotifier<AsyncValue<List<Conversation
   Future<void> refresh() => _load();
 }
 
-final conversationsControllerProvider =
-    StateNotifierProvider.autoDispose<ConversationsController, AsyncValue<List<Conversation>>>(
-        (ref) {
+final conversationsControllerProvider = StateNotifierProvider.autoDispose<
+    ConversationsController, AsyncValue<List<Conversation>>>((ref) {
   final userId = ref.watch(currentUserIdProvider);
-  return ConversationsController(ref.watch(chatRepositoryProvider), userId ?? '');
+  return ConversationsController(
+      ref.watch(chatRepositoryProvider), userId ?? '');
 });
 
 /// Total unread message count across all conversations, for a badge.
-final unreadMessagesCountProvider = FutureProvider.autoDispose<int>((ref) async {
-  final convos = await ref.watch(conversationsControllerProvider.future);
-  return convos.fold<int>(0, (sum, c) => sum + c.unreadCount);
+final unreadMessagesCountProvider =
+    FutureProvider.autoDispose<int>((ref) async {
+  final convosAsync = ref.watch(conversationsControllerProvider);
+  return convosAsync.maybeWhen(
+    data: (convos) => convos.fold<int>(0, (sum, c) => sum + c.unreadCount),
+    orElse: () => 0,
+  );
 });
 
 /// Messages within a single conversation, kept live via realtime.
@@ -49,7 +55,8 @@ class MessagesController extends StateNotifier<AsyncValue<List<ChatMessage>>> {
   final String _conversationId;
   StreamSubscription? _sub;
 
-  MessagesController(this._repository, this._conversationId) : super(const AsyncValue.loading()) {
+  MessagesController(this._repository, this._conversationId)
+      : super(const AsyncValue.loading()) {
     _load();
     _listen();
   }
@@ -94,6 +101,7 @@ class MessagesController extends StateNotifier<AsyncValue<List<ChatMessage>>> {
 }
 
 final messagesControllerProvider = StateNotifierProvider.autoDispose
-    .family<MessagesController, AsyncValue<List<ChatMessage>>, String>((ref, conversationId) {
+    .family<MessagesController, AsyncValue<List<ChatMessage>>, String>(
+        (ref, conversationId) {
   return MessagesController(ref.watch(chatRepositoryProvider), conversationId);
 });

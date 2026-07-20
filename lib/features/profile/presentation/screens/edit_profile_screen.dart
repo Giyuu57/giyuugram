@@ -152,10 +152,10 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                   child: const Text('Change profile photo'),
                 ),
                 const SizedBox(height: 16),
-                _FieldLabel('Full Name'),
+                const _FieldLabel('Full Name'),
                 AuthTextField(controller: _fullNameController, hintText: 'Full Name'),
                 const SizedBox(height: 12),
-                _FieldLabel('Username'),
+                const _FieldLabel('Username'),
                 AuthTextField(
                   controller: _usernameController,
                   hintText: 'Username',
@@ -168,7 +168,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                   },
                 ),
                 const SizedBox(height: 12),
-                _FieldLabel('Bio'),
+                const _FieldLabel('Bio'),
                 TextField(
                   controller: _bioController,
                   maxLines: 3,
@@ -179,7 +179,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                _FieldLabel('Website'),
+                const _FieldLabel('Website'),
                 AuthTextField(controller: _websiteController, hintText: 'Website'),
                 const SizedBox(height: 24),
                 PrimaryButton(

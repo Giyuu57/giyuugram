@@ -97,8 +97,8 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
                     itemCount: feedState.posts.length + 2,
                     itemBuilder: (context, index) {
                       if (index == 0) {
-                        return Column(
-                          children: const [StoriesRow(), Divider(height: 1)],
+                        return const Column(
+                          children: [StoriesRow(), Divider(height: 1)],
                         );
                       }
                       final postIndex = index - 1;

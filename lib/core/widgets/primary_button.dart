@@ -23,7 +23,7 @@ class PrimaryButton extends StatelessWidget {
         onPressed: disabled ? null : onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.igBlue,
-          disabledBackgroundColor: AppColors.igBlue.withOpacity(0.4),
+          disabledBackgroundColor: AppColors.igBlue.withValues(alpha: 0.4),
           foregroundColor: Colors.white,
           elevation: 0,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),

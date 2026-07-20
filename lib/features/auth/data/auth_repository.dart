@@ -64,10 +64,7 @@ class AuthRepository {
   // ---------------- GOOGLE (Web + Android only) ----------------
 
   Future<void> signInWithGoogle() async {
-    // TODO: Replace with your real Web Client ID from Google Cloud Console.
-    // Must match: web/index.html meta tag AND Supabase Dashboard -> Auth ->
-    // Providers -> Google -> Client ID.
-    const webClientId = 'YOUR_WEB_CLIENT_ID.apps.googleusercontent.com';
+    const webClientId = '148015904118-8eud8t75g26d2c9dc490m2l3ov2t2h0k.apps.googleusercontent.com';
 
     final GoogleSignIn googleSignIn = kIsWeb
         ? GoogleSignIn(
