@@ -4,7 +4,8 @@ import '../../../../core/services/providers.dart';
 import '../../../../core/widgets/profile_avatar.dart';
 import '../../../../core/widgets/stories_row_skeleton.dart';
 import '../providers/stories_providers.dart';
-import 'package:giyuugram/features/stories/presentation/screens/story_viewer_screen.dart';
+import '../screens/create_story_screen.dart';
+import '../screens/story_viewer_screen.dart';
 
 class StoriesRow extends ConsumerWidget {
   const StoriesRow({super.key});
@@ -18,15 +19,17 @@ class StoriesRow extends ConsumerWidget {
       loading: () => const StoriesRowSkeleton(),
       error: (e, st) => const SizedBox(height: 100),
       data: (groups) {
+        final hasOwnStory = groups.isNotEmpty && groups.first.userId == currentUserId;
+        final otherGroups = hasOwnStory ? groups.sublist(1) : groups;
+
         return SizedBox(
           height: 100,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            itemCount: groups.length + 1, // +1 for "Your Story" add button
+            itemCount: otherGroups.length + 1,
             itemBuilder: (context, index) {
               if (index == 0) {
-                final hasOwnStory = groups.isNotEmpty && groups.first.userId == currentUserId;
                 return _AddOrOwnStoryTile(
                   hasOwnStory: hasOwnStory,
                   group: hasOwnStory ? groups.first : null,
@@ -36,18 +39,15 @@ class StoriesRow extends ConsumerWidget {
                         builder: (_) => StoryViewerScreen(groups: groups, initialIndex: 0),
                       ));
                     } else {
-                      // Navigate to create-story flow — wired in Phase 6.
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (_) => const CreateStoryScreen(),
+                      ));
                     }
                   },
                 );
               }
 
-              final groupIndex = groups.first.userId == currentUserId ? index - 1 : index - 1;
-              final adjustedGroups =
-                  groups.first.userId == currentUserId ? groups.sublist(1) : groups;
-              if (groupIndex >= adjustedGroups.length) return const SizedBox.shrink();
-
-              final group = adjustedGroups[groupIndex];
+              final group = otherGroups[index - 1];
               return _StoryTile(
                 group: group,
                 onTap: () {
@@ -107,9 +107,9 @@ class _AddOrOwnStoryTile extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 4),
-            Text(
-              hasOwnStory ? 'Your story' : 'Your story',
-              style: const TextStyle(fontSize: 11),
+            const Text(
+              'Your story',
+              style: TextStyle(fontSize: 11),
               overflow: TextOverflow.ellipsis,
             ),
           ],

@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:giyuugram/features/feed/data/stories_repository.dart';
 import '../../../../core/services/providers.dart';
 import '../../../../shared_models/story.dart';
+import '../../data/stories_repository.dart';
 
 final storiesRepositoryProvider = Provider<StoriesRepository>((ref) {
   return StoriesRepository(ref.watch(supabaseClientProvider));

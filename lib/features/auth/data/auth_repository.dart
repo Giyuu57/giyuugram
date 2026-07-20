@@ -23,7 +23,6 @@ class AuthRepository {
     required String username,
     required String fullName,
   }) async {
-    // Pre-check username uniqueness for a better UX than waiting for a DB error
     final existing = await _client
         .from('profiles')
         .select('id')
@@ -65,18 +64,20 @@ class AuthRepository {
   // ---------------- GOOGLE (Web + Android only) ----------------
 
   Future<void> signInWithGoogle() async {
+    // TODO: Replace with your real Web Client ID from Google Cloud Console.
+    // Must match: web/index.html meta tag AND Supabase Dashboard -> Auth ->
+    // Providers -> Google -> Client ID.
     const webClientId = 'YOUR_WEB_CLIENT_ID.apps.googleusercontent.com';
 
     final GoogleSignIn googleSignIn = kIsWeb
         ? GoogleSignIn(
             // On web, the client ID is read from the
-            // <meta name="google-signin-client_id"> tag in web/index.html —
-            // do NOT pass serverClientId here, it's unsupported on web.
+            // <meta name="google-signin-client_id"> tag in web/index.html.
             clientId: webClientId,
           )
         : GoogleSignIn(
-            // On Android, serverClientId scopes the returned ID token to the
-            // Web client so Supabase can verify it server-side. The Android
+            // On Android, serverClientId scopes the ID token to the Web
+            // client so Supabase can verify it server-side. The Android
             // client itself is auto-detected via package name + SHA-1
             // registered in Google Cloud Console.
             serverClientId: webClientId,

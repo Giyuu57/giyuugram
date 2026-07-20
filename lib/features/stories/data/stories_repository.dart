@@ -1,12 +1,12 @@
+import 'dart:io';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:uuid/uuid.dart';
 import '../../../shared_models/story.dart';
 
 class StoriesRepository {
   final SupabaseClient _client;
   StoriesRepository(this._client);
 
-  /// Fetches active (non-expired) stories from followed users + self,
-  /// grouped by author for the horizontal stories row.
   Future<List<StoryGroup>> getStoriesFeed(String currentUserId) async {
     final followingRows = await _client
         .from('follows')
@@ -40,7 +40,6 @@ class StoriesRepository {
     final viewedIds =
         List<Map<String, dynamic>>.from(viewedRows).map((r) => r['story_id'] as String).toSet();
 
-    // Group by user_id, preserving self first, then most recent story activity.
     final Map<String, List<Story>> grouped = {};
     final Map<String, Map<String, dynamic>> profileByUser = {};
 
@@ -72,7 +71,6 @@ class StoriesRepository {
       );
     }).toList();
 
-    // Self first, then unseen-before-seen, mimicking Instagram ordering.
     groups.sort((a, b) {
       if (a.userId == currentUserId) return -1;
       if (b.userId == currentUserId) return 1;
@@ -89,6 +87,31 @@ class StoriesRepository {
     await _client.from('story_views').upsert({
       'story_id': storyId,
       'viewer_id': viewerId,
+    });
+  }
+
+  /// Uploads a new story image/video to Storage and inserts the DB row.
+  Future<void> createStory({
+    required String userId,
+    required File file,
+    String mediaType = 'image',
+  }) async {
+    final ext = file.path.split('.').last;
+    final fileName = '${const Uuid().v4()}.$ext';
+    final storagePath = '$userId/$fileName';
+
+    await _client.storage.from('stories').upload(
+          storagePath,
+          file,
+          fileOptions: const FileOptions(upsert: true),
+        );
+
+    final publicUrl = _client.storage.from('stories').getPublicUrl(storagePath);
+
+    await _client.from('stories').insert({
+      'user_id': userId,
+      'media_url': publicUrl,
+      'media_type': mediaType,
     });
   }
 }

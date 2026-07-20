@@ -6,19 +6,17 @@ import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/signup_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../features/profile/presentation/screens/edit_profile_screen.dart';
+import '../../features/profile/presentation/screens/settings_screen.dart';
 import '../../features/feed/presentation/screens/home_feed_screen.dart';
+import '../../features/explore/presentation/screens/explore_screen.dart';
+import '../../features/reels/presentation/screens/reels_screen.dart';
+import '../../features/activity/presentation/screens/activity_screen.dart';
+import '../../features/activity/presentation/providers/activity_providers.dart';
+import '../../features/create_post/presentation/screens/media_picker_screen.dart';
+import '../../features/stories/presentation/screens/create_story_screen.dart';
+import '../../features/chat/presentation/screens/chat_list_screen.dart';
+import '../../features/chat/presentation/screens/chat_detail_screen.dart';
 import 'route_names.dart';
-
-// Placeholder screens — will be replaced feature by feature in later phases.
-class _Placeholder extends StatelessWidget {
-  final String label;
-  const _Placeholder(this.label);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(body: Center(child: Text(label)));
-  }
-}
 
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authStateProvider);
@@ -62,28 +60,28 @@ final routerProvider = Provider<GoRouter>((ref) {
             GoRoute(
               path: '/explore',
               name: RouteNames.explore,
-              builder: (context, state) => const _Placeholder('Explore'),
+              builder: (context, state) => const ExploreScreen(),
             ),
           ]),
           StatefulShellBranch(routes: [
             GoRoute(
               path: '/reels',
               name: RouteNames.reels,
-              builder: (context, state) => const _Placeholder('Reels'),
+              builder: (context, state) => const ReelsScreen(),
             ),
           ]),
           StatefulShellBranch(routes: [
             GoRoute(
               path: '/activity',
               name: RouteNames.activity,
-              builder: (context, state) => const _Placeholder('Activity'),
+              builder: (context, state) => const ActivityScreen(),
             ),
           ]),
           StatefulShellBranch(routes: [
             GoRoute(
               path: '/profile',
               name: RouteNames.profile,
-              builder: (context, state) => const ProfileScreen(), // userId: null => own profile
+              builder: (context, state) => const ProfileScreen(),
             ),
           ]),
         ],
@@ -91,12 +89,22 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/create_post',
         name: RouteNames.createPost,
-        builder: (context, state) => const _Placeholder('Create Post'),
+        builder: (context, state) => const MediaPickerScreen(),
+      ),
+      GoRoute(
+        path: '/create_story',
+        name: RouteNames.createStory,
+        builder: (context, state) => const CreateStoryScreen(),
       ),
       GoRoute(
         path: '/edit_profile',
         name: RouteNames.editProfile,
         builder: (context, state) => const EditProfileScreen(),
+      ),
+      GoRoute(
+        path: '/settings',
+        name: RouteNames.settings,
+        builder: (context, state) => const SettingsScreen(),
       ),
       GoRoute(
         path: '/profile/:userId',
@@ -108,13 +116,14 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/chat',
         name: RouteNames.chatList,
-        builder: (context, state) => const _Placeholder('Chat List'),
+        builder: (context, state) => const ChatListScreen(),
       ),
       GoRoute(
         path: '/chat/:conversationId',
         name: RouteNames.chatDetail,
-        builder: (context, state) => _Placeholder(
-          'Chat with ${state.pathParameters['conversationId']}',
+        builder: (context, state) => ChatDetailScreen(
+          conversationId: state.pathParameters['conversationId']!,
+          title: state.extra as String?,
         ),
       ),
     ],
@@ -128,13 +137,16 @@ class _AuthRefreshNotifier extends ChangeNotifier {
   }
 }
 
-/// Bottom navigation shell — the 5 main Instagram tabs.
-class _ScaffoldWithNavBar extends StatelessWidget {
+/// Bottom navigation shell — the 5 main Instagram tabs, with an unread
+/// activity badge.
+class _ScaffoldWithNavBar extends ConsumerWidget {
   final StatefulNavigationShell navigationShell;
   const _ScaffoldWithNavBar({required this.navigationShell});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final unreadCount = ref.watch(unreadActivityCountProvider).valueOrNull ?? 0;
+
     return Scaffold(
       body: navigationShell,
       bottomNavigationBar: BottomNavigationBar(
@@ -143,12 +155,19 @@ class _ScaffoldWithNavBar extends StatelessWidget {
           index,
           initialLocation: index == navigationShell.currentIndex,
         ),
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Explore'),
-          BottomNavigationBarItem(icon: Icon(Icons.movie_creation_outlined), label: 'Reels'),
-          BottomNavigationBarItem(icon: Icon(Icons.favorite_border), label: 'Activity'),
-          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Profile'),
+        items: [
+          const BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'Home'),
+          const BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Explore'),
+          const BottomNavigationBarItem(icon: Icon(Icons.movie_creation_outlined), label: 'Reels'),
+          BottomNavigationBarItem(
+            icon: Badge(
+              label: Text('$unreadCount'),
+              isLabelVisible: unreadCount > 0,
+              child: const Icon(Icons.favorite_border),
+            ),
+            label: 'Activity',
+          ),
+          const BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Profile'),
         ],
       ),
     );

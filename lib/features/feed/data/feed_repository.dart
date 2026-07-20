@@ -1,4 +1,8 @@
+import 'dart:io';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:uuid/uuid.dart';
+import 'package:video_thumbnail/video_thumbnail.dart';
+import 'package:path_provider/path_provider.dart';
 import '../../../shared_models/post.dart';
 import '../../../shared_models/comment.dart';
 
@@ -6,9 +10,6 @@ class FeedRepository {
   final SupabaseClient _client;
   FeedRepository(this._client);
 
-  /// Fetches a page of posts for the home feed — from users the current
-  /// user follows, plus their own posts. Falls back to global posts if
-  /// the user isn't following anyone yet (better empty-state UX).
   Future<List<Post>> getFeedPosts({
     required String currentUserId,
     int page = 0,
@@ -17,7 +18,6 @@ class FeedRepository {
     final from = page * pageSize;
     final to = from + pageSize - 1;
 
-    // Get list of followed user IDs (+ self) to scope the feed.
     final followingRows = await _client
         .from('follows')
         .select('following_id')
@@ -44,8 +44,6 @@ class FeedRepository {
 
     final postIds = rows.map((r) => r['id'] as String).toList();
 
-    // Batch-fetch like/save status for all posts in this page in 2 queries
-    // instead of N — avoids an N+1 query problem.
     final likedRows = await _client
         .from('likes')
         .select('post_id')
@@ -99,7 +97,6 @@ class FeedRepository {
     await _client.from('saved_posts').delete().eq('user_id', userId).eq('post_id', postId);
   }
 
-  /// Fires an activity notification when a post is liked (skips self-likes).
   Future<void> notifyLike({
     required String actorId,
     required String postOwnerId,
@@ -166,5 +163,114 @@ class FeedRepository {
 
   Future<void> deleteComment(String commentId) async {
     await _client.from('comments').delete().eq('id', commentId);
+  }
+
+  /// Uploads one or more media files to Storage and creates the post row,
+  /// parsing + linking any #hashtags found in the caption.
+  Future<String> createPost({
+    required String userId,
+    required List<File> mediaFiles,
+    String? caption,
+    String? location,
+    String type = 'image', // 'image' | 'video' | 'reel'
+    String? thumbnailFile,
+  }) async {
+    final mediaUrls = <String>[];
+
+    for (final file in mediaFiles) {
+      final ext = file.path.split('.').last;
+      final fileName = '${const Uuid().v4()}.$ext';
+      final storagePath = '$userId/$fileName';
+
+      await _client.storage.from('posts').upload(
+            storagePath,
+            file,
+            fileOptions: const FileOptions(upsert: true),
+          );
+
+      mediaUrls.add(_client.storage.from('posts').getPublicUrl(storagePath));
+    }
+
+    String? thumbnailUrl;
+    if (thumbnailFile != null) {
+      final thumbFile = File(thumbnailFile);
+      final thumbName = '${const Uuid().v4()}_thumb.jpg';
+      final thumbPath = '$userId/$thumbName';
+      await _client.storage.from('posts').upload(
+            thumbPath,
+            thumbFile,
+            fileOptions: const FileOptions(upsert: true),
+          );
+      thumbnailUrl = _client.storage.from('posts').getPublicUrl(thumbPath);
+    }
+
+    final postRow = await _client
+        .from('posts')
+        .insert({
+          'user_id': userId,
+          'caption': caption,
+          'media_urls': mediaUrls,
+          'thumbnail_url': thumbnailUrl ?? (type == 'image' ? mediaUrls.first : null),
+          'type': type,
+          'location': location,
+        })
+        .select('id')
+        .single();
+
+    final postId = postRow['id'] as String;
+
+    if (caption != null && caption.isNotEmpty) {
+      await _linkHashtags(postId: postId, caption: caption);
+    }
+
+    return postId;
+  }
+
+  Future<void> _linkHashtags({required String postId, required String caption}) async {
+    final matches = RegExp(r'#(\w+)').allMatches(caption);
+    final tags = matches.map((m) => m.group(1)!.toLowerCase()).toSet();
+    if (tags.isEmpty) return;
+
+    for (final tag in tags) {
+      final existing = await _client
+          .from('hashtags')
+          .select('id')
+          .eq('tag', tag)
+          .maybeSingle();
+
+      String hashtagId;
+      if (existing != null) {
+        hashtagId = existing['id'] as String;
+      } else {
+        final inserted = await _client
+            .from('hashtags')
+            .insert({'tag': tag})
+            .select('id')
+            .single();
+        hashtagId = inserted['id'] as String;
+      }
+
+      await _client.from('post_hashtags').insert({
+        'post_id': postId,
+        'hashtag_id': hashtagId,
+      });
+    }
+  }
+
+  Future<void> deletePost(String postId) async {
+    await _client.from('posts').delete().eq('id', postId);
+  }
+
+  /// Generates a thumbnail from a local video file's first frame and
+  /// returns the local file path.
+  Future<String?> generateVideoThumbnail(String videoPath) async {
+    final thumbPath = await VideoThumbnail.thumbnailFile(
+      video: videoPath,
+      thumbnailPath: (await getTemporaryDirectory()).path,
+      imageFormat: ImageFormat.JPEG,
+      maxWidth: 720,
+      quality: 75,
+    );
+    return thumbPath;
   }
 }

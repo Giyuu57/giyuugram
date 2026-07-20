@@ -45,9 +45,13 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
       appBar: AppBar(
         title: const Text(
           'Giyuugram',
-          style: TextStyle(fontFamily: 'Billabong', fontSize: 28),
+          style: TextStyle(fontSize: 28, fontWeight: FontWeight.w600),
         ),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.add_box_outlined),
+            onPressed: () => context.pushNamed('create_post'),
+          ),
           IconButton(
             icon: const Icon(Icons.favorite_border),
             onPressed: () => context.pushNamed('activity'),
@@ -90,18 +94,17 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
                   )
                 : ListView.builder(
                     controller: _scrollController,
-                    itemCount: feedState.posts.length + 2, // +stories row +loader
+                    itemCount: feedState.posts.length + 2,
                     itemBuilder: (context, index) {
                       if (index == 0) {
-                        return const Column(
-                          children: [StoriesRow(), Divider(height: 1)],
+                        return Column(
+                          children: const [StoriesRow(), Divider(height: 1)],
                         );
                       }
                       final postIndex = index - 1;
                       if (postIndex < feedState.posts.length) {
                         return PostCard(post: feedState.posts[postIndex]);
                       }
-                      // Bottom loader
                       if (feedState.isLoadingMore) {
                         return const Padding(
                           padding: EdgeInsets.all(16),

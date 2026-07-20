@@ -62,7 +62,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     'Giyuugram',
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                           fontWeight: FontWeight.w400,
-                          fontFamily: 'Billabong', // add a script font asset for authenticity
                         ),
                   ),
                   const SizedBox(height: 40),
@@ -121,7 +120,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     onPressed: () async {
                       final success =
                           await ref.read(authControllerProvider.notifier).signInWithGoogle();
-                      // ignore: use_build_context_synchronously
                       if (success && mounted) context.go('/home');
                     },
                   ),

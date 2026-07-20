@@ -10,7 +10,6 @@ final feedRepositoryProvider = Provider<FeedRepository>((ref) {
 
 const _pageSize = 10;
 
-/// Paginated feed state — holds accumulated posts + pagination status.
 class FeedState {
   final List<Post> posts;
   final bool isLoadingMore;
@@ -89,7 +88,6 @@ class FeedController extends StateNotifier<FeedState> {
 
   Future<void> refresh() => loadInitial();
 
-  /// Optimistic like toggle — updates UI instantly, rolls back on failure.
   Future<void> toggleLike(String postId) async {
     final index = state.posts.indexWhere((p) => p.id == postId);
     if (index == -1) return;
@@ -115,7 +113,6 @@ class FeedController extends StateNotifier<FeedState> {
         );
       }
     } catch (e) {
-      // Roll back on failure.
       final rollback = [...state.posts];
       rollback[index] = post;
       state = state.copyWith(posts: rollback);
@@ -162,7 +159,6 @@ final feedControllerProvider =
   return FeedController(ref.watch(feedRepositoryProvider), userId ?? '');
 });
 
-/// Comments for a specific post — loaded on-demand when the sheet opens.
 final commentsProvider =
     FutureProvider.autoDispose.family<List<Comment>, String>((ref, postId) async {
   return ref.watch(feedRepositoryProvider).getComments(postId);

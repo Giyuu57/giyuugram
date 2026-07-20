@@ -7,7 +7,6 @@ class ProfileRepository {
   final SupabaseClient _client;
   ProfileRepository(this._client);
 
-  /// Fetch a single profile with computed follower/following/post counts.
   Future<AppUser> getProfile(String userId) async {
     final profileRow = await _client
         .from('profiles')
@@ -38,7 +37,6 @@ class ProfileRepository {
     });
   }
 
-  /// Grid of a user's own posts (id + first media thumbnail only — fast query).
   Future<List<Map<String, dynamic>>> getUserPosts(
     String userId, {
     int page = 0,
@@ -57,7 +55,6 @@ class ProfileRepository {
     return List<Map<String, dynamic>>.from(response);
   }
 
-  /// Grid of posts a user has saved.
   Future<List<Map<String, dynamic>>> getSavedPosts(
     String userId, {
     int page = 0,
@@ -94,7 +91,6 @@ class ProfileRepository {
       'following_id': followingId,
     });
 
-    // Fire an activity notification for the followed user.
     await _client.from('activities').insert({
       'recipient_id': followingId,
       'actor_id': followerId,
@@ -128,7 +124,6 @@ class ProfileRepository {
     await _client.from('profiles').update(updates).eq('id', userId);
   }
 
-  /// Uploads a new avatar image to Storage and updates the profile row.
   Future<String> uploadAvatar({required String userId, required File file}) async {
     final ext = file.path.split('.').last;
     final fileName = '${const Uuid().v4()}.$ext';

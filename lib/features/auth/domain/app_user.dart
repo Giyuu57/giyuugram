@@ -18,6 +18,5 @@ class AppUser with _$AppUser {
     @Default(0) int postCount,
   }) = _AppUser;
 
-  factory AppUser.fromJson(Map<String, dynamic> json) =>
-      _$AppUserFromJson(json);
+  factory AppUser.fromJson(Map<String, dynamic> json) => _$AppUserFromJson(json);
 }

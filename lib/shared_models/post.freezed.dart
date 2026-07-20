@@ -29,8 +29,7 @@ mixin _$Post {
   String? get location => throw _privateConstructorUsedError;
   int get likeCount => throw _privateConstructorUsedError;
   int get commentCount => throw _privateConstructorUsedError;
-  DateTime get createdAt =>
-      throw _privateConstructorUsedError; // Joined fields (not columns) — populated by the repository query
+  DateTime get createdAt => throw _privateConstructorUsedError;
   String? get authorUsername => throw _privateConstructorUsedError;
   String? get authorAvatarUrl => throw _privateConstructorUsedError;
   bool get isLikedByMe => throw _privateConstructorUsedError;
@@ -322,7 +321,6 @@ class _$PostImpl implements _Post {
   final int commentCount;
   @override
   final DateTime createdAt;
-// Joined fields (not columns) — populated by the repository query
   @override
   final String? authorUsername;
   @override
@@ -443,8 +441,7 @@ abstract class _Post implements Post {
   @override
   int get commentCount;
   @override
-  DateTime
-      get createdAt; // Joined fields (not columns) — populated by the repository query
+  DateTime get createdAt;
   @override
   String? get authorUsername;
   @override

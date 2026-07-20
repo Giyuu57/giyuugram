@@ -27,7 +27,6 @@ class AppTheme {
           elevation: 0,
         ),
         dividerColor: AppColors.igLightGrey,
-        fontFamily: 'SF Pro Display',
         useMaterial3: true,
       );
 
@@ -54,7 +53,6 @@ class AppTheme {
           elevation: 0,
         ),
         dividerColor: const Color(0xFF262626),
-        fontFamily: 'SF Pro Display',
         useMaterial3: true,
       );
 }

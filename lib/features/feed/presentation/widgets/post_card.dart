@@ -64,7 +64,6 @@ class _PostCardState extends ConsumerState<PostCard> with SingleTickerProviderSt
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Header
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           child: Row(
@@ -91,7 +90,6 @@ class _PostCardState extends ConsumerState<PostCard> with SingleTickerProviderSt
             ],
           ),
         ),
-        // Media
         GestureDetector(
           onDoubleTap: _handleDoubleTap,
           child: Stack(
@@ -163,7 +161,6 @@ class _PostCardState extends ConsumerState<PostCard> with SingleTickerProviderSt
             ],
           ),
         ),
-        // Action row
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           child: Row(
@@ -181,9 +178,7 @@ class _PostCardState extends ConsumerState<PostCard> with SingleTickerProviderSt
               ),
               IconButton(
                 icon: const Icon(Icons.send_outlined),
-                onPressed: () {
-                  // Share to DM — wired properly in Phase 10.
-                },
+                onPressed: () {},
               ),
               const Spacer(),
               IconButton(
@@ -193,7 +188,6 @@ class _PostCardState extends ConsumerState<PostCard> with SingleTickerProviderSt
             ],
           ),
         ),
-        // Like count + caption + comments preview
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Column(

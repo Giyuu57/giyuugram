@@ -16,7 +16,6 @@ class Post with _$Post {
     @Default(0) int likeCount,
     @Default(0) int commentCount,
     required DateTime createdAt,
-    // Joined fields (not columns) — populated by the repository query
     String? authorUsername,
     String? authorAvatarUrl,
     @Default(false) bool isLikedByMe,

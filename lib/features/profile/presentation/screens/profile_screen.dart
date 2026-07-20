@@ -9,7 +9,7 @@ import '../../../auth/presentation/providers/auth_controller.dart';
 import '../providers/profile_providers.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
-  final String? userId; // null => viewing own profile
+  final String? userId;
   const ProfileScreen({super.key, this.userId});
 
   @override
@@ -95,7 +95,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
                                   StatColumn(
                                     count: profile.followerCount,
                                     label: 'Followers',
-                                    onTap: () {}, // wire to followers list in a later polish pass
+                                    onTap: () {},
                                   ),
                                   StatColumn(
                                     count: profile.followingCount,
@@ -176,6 +176,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
               onTap: () {
                 Navigator.pop(ctx);
                 context.pushNamed('edit_profile');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.settings_outlined),
+              title: const Text('Settings'),
+              onTap: () {
+                Navigator.pop(ctx);
+                context.pushNamed('settings');
               },
             ),
             ListTile(
@@ -261,7 +269,7 @@ class _ActionRow extends ConsumerWidget {
                 height: 36,
                 child: OutlinedButton(
                   onPressed: () => context.pushNamed('chat_detail', pathParameters: {
-                    'conversationId': targetUserId, // placeholder — resolved properly in Phase 10
+                    'conversationId': targetUserId,
                   }),
                   style: OutlinedButton.styleFrom(
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -290,9 +298,7 @@ class _PostsGridTab extends ConsumerWidget {
       data: (posts) => SingleChildScrollView(
         child: PostGrid(
           posts: posts,
-          onTapPost: (index) {
-            // navigate to full post detail — wired in Phase 4
-          },
+          onTapPost: (index) {},
         ),
       ),
     );

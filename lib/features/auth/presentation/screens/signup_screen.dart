@@ -72,7 +72,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                 const Text(
                   'Giyuugram',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 32, fontFamily: 'Billabong'),
+                  style: TextStyle(fontSize: 32),
                 ),
                 const SizedBox(height: 8),
                 const Text(

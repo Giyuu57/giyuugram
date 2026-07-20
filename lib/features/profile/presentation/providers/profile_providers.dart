@@ -8,8 +8,6 @@ final profileRepositoryProvider = Provider<ProfileRepository>((ref) {
   return ProfileRepository(ref.watch(supabaseClientProvider));
 });
 
-/// Fetches a profile by userId. `.family` lets us reuse this for any profile,
-/// not just the logged-in user (needed when viewing someone else's profile).
 final profileProvider =
     FutureProvider.autoDispose.family<AppUser, String>((ref, userId) async {
   return ref.watch(profileRepositoryProvider).getProfile(userId);
@@ -34,7 +32,6 @@ final isFollowingProvider =
       .isFollowing(followerId: currentUserId, followingId: targetUserId);
 });
 
-/// Handles follow/unfollow + avatar upload + profile edits with loading state.
 class ProfileActionsController extends StateNotifier<AsyncValue<void>> {
   final ProfileRepository _repository;
   final Ref _ref;
@@ -53,7 +50,6 @@ class ProfileActionsController extends StateNotifier<AsyncValue<void>> {
       } else {
         await _repository.follow(followerId: currentUserId, followingId: targetUserId);
       }
-      // Invalidate so both the button state and follower counts refresh.
       _ref.invalidate(isFollowingProvider(targetUserId));
       _ref.invalidate(profileProvider(targetUserId));
       state = const AsyncValue.data(null);

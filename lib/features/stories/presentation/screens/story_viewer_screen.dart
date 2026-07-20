@@ -2,9 +2,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:giyuugram/features/stories/presentation/providers/stories_providers.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import '../../../../core/services/providers.dart';
+import '../providers/stories_providers.dart';
 import '../../../../shared_models/story.dart';
 
 class StoryViewerScreen extends ConsumerStatefulWidget {

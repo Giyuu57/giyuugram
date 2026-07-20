@@ -32,6 +32,8 @@ dependencies:
   chewie: ^1.8.5
   image_cropper: ^8.0.2
   cached_network_image: ^3.4.0
+  video_thumbnail: ^0.5.3
+  path_provider: ^2.1.4
 
   # UI / UX
   shimmer: ^3.0.0
